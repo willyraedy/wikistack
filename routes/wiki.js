@@ -22,16 +22,29 @@ wikiRouter.get('/:urlTitle', (req, res, next) => {
 })
 
 wikiRouter.post('/', (req, res, next) => {
-  Page.create({
-    title: req.body.title,
-    content: req.body.content,
-    status: req.body.status,
+  User.findOrCreate({
+    where: {
+      email: req.body.email,
+      name: req.body.author
+    }
   })
-  .then((objPage) => {
-    console.log('objPage: ', objPage)
-    // res.redirect(objPage.get('route'));
-    res.redirect(objPage.route);
-  })
+    .spread(function (inst, created) {
+      var user = inst;
+
+      return Page.create({
+        title: req.body.title,
+        content: req.body.content,
+        status: req.body.status,
+        // authorId: inst.id
+      }).then(function(newPage) {
+         return newPage.setAuthor(user);
+      });
+    })
+    .then((newPageWithAuthorId) => {
+      // could not get user here
+      res.redirect(newPageWithAuthorId.route);
+    })
+    .catch(next);
 })
 
 module.exports = wikiRouter;

@@ -11,9 +11,6 @@ let Page = db.define('page', {
   urlTitle: {
     type: Sequelize.STRING,
     allowNull: false,
-    // validation: {
-    //   isUrl: true
-    // }
   },
   content: {
     type: Sequelize.TEXT,
@@ -34,16 +31,14 @@ let Page = db.define('page', {
   },
   hooks: {
     beforeValidate: function(page) {
-      // console.log('page.title: ', page.title);
       if(page.title) {
         page.urlTitle = page.title.replace(/\s/g,  '_').replace(/\W/g,  '');
       } else {
          page.urlTitle = Math.random().toString(36).substring(2, 7);
       }
-      // console.log('this.urlTitle: ', this.urlTitle);
     }
   }
-})
+});
 
 let User = db.define('user', {
   name: {
@@ -57,7 +52,9 @@ let User = db.define('user', {
       isEmail: true
     }
   }
-})
+});
+
+Page.belongsTo(User, { as: 'author' });
 
 module.exports =  {
   db: db,

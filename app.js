@@ -23,7 +23,7 @@ app.use(express.static('public'));
 app.use('/', indexRouter);
 
 
-models.db.sync({ force: false })
+models.db.sync({ force: true })
   .then(function () {
     app.listen(3000, function () {
       console.log('Server is up on 3000');
