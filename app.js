@@ -2,7 +2,8 @@ let express = require('express');
 let morgan = require('morgan');
 let bodyParser = require('body-parser');
 let nunjucks = require('nunjucks');
-let models = require('./models/')
+let models = require('./models/');
+let indexRouter = require('./routes/');
 
 let app = express();
 
@@ -14,16 +15,15 @@ app.engine('html', nunjucks.render);
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: true }));
+//
 
 app.use(express.static('public'));
 
-app.get('/', function (req, res, next) {
-  res.render('index');
-});
+app.use('/', indexRouter);
 
 
-models.db.sync({ force: true })
+models.db.sync({ force: false })
   .then(function () {
     app.listen(3000, function () {
       console.log('Server is up on 3000');
