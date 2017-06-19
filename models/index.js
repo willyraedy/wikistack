@@ -1,4 +1,6 @@
 let Sequelize = require('sequelize');
+let marked = require('marked');
+
 let db = new Sequelize('postgres://localhost:5432/wikistack', {
   logging: false
 })
@@ -30,6 +32,9 @@ let Page = db.define('page', {
   getterMethods: {
     route() {
       return '/wiki/' + this.urlTitle;
+    },
+    renderedContent() {
+      return marked(this.content);
     }
   },
   hooks: {

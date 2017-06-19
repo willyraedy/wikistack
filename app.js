@@ -8,9 +8,10 @@ let indexRouter = require('./routes/');
 let app = express();
 
 app.set('view engine', 'html');
-var env = nunjucks.configure('views', { noCache: true });
+const env = nunjucks.configure('views', { noCache: true});
 app.engine('html', nunjucks.render);
-
+const AutoEscapeExtension = require("nunjucks-autoescape")(nunjucks);
+env.addExtension('AutoEscapeExtension', new AutoEscapeExtension(env));
 
 
 app.use(morgan('dev'));
