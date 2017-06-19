@@ -11,6 +11,15 @@ wikiRouter.get('/add', (req, res, next) => {
   res.render('addpage');
 })
 
+wikiRouter.get('/search', (req, res, next) => {
+  console.log('Query', req.query);
+  if (Object.keys(req.query).length) {
+
+  } else {
+    res.render('search')
+  }
+})
+
 wikiRouter.get('/:urlTitle', (req, res, next) => {
   Page.findOne({
     where: {
@@ -24,15 +33,32 @@ wikiRouter.get('/:urlTitle', (req, res, next) => {
     if (page === null) {
         res.status(404).send();
     } else {
-        res.render('wikipage', {
-            page: page
-        });
+      page.tags = page.tags.join(', ')
+      res.render('wikipage', {
+          page: page
+      });
     }
   })
   .catch(next)
 })
 
+wikiRouter.get('/:urlTitle/similar', (req, res, next) => {
+  Page.findOne({
+    where: {
+      urlTitle: req.params.urlTitle,
+    },
+  })
+  .then(page => {
+    return page.findSimilar()
+  })
+  .then(similarPages => {
+    res.render('index', {pages: similarPages})
+  })
+});
+
 wikiRouter.post('/', (req, res, next) => {
+  const re = /\w+/g;
+  const tags = req.body.tags.match(re)
   User.findOrCreate({
     where: {
       email: req.body.email,
@@ -46,7 +72,7 @@ wikiRouter.post('/', (req, res, next) => {
         title: req.body.title,
         content: req.body.content,
         status: req.body.status,
-        // authorId: inst.id
+        tags: tags
       }).then(function(newPage) {
          return newPage.setAuthor(user);
       });
@@ -57,5 +83,6 @@ wikiRouter.post('/', (req, res, next) => {
     })
     .catch(next);
 })
+
 
 module.exports = wikiRouter;

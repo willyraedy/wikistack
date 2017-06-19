@@ -8,7 +8,6 @@ module.exports = userRouter;
 userRouter.get('/', (req, res ,next) => {
   User.findAll()
   .then(users => {
-    console.log('users: ', users)
     res.render('users', {users: users})
   })
   .catch(next)

@@ -8,11 +8,18 @@ router.use('/wiki', wikiRouter);
 router.use('/users', userRouter);
 
 router.get('/', function (req, res, next) {
-  Page.findAll({})
-  .then(arrPages => {
-    console.log('arrPages: ', arrPages);
-    res.render('index', {pages: arrPages});
-  })
+  if (Object.keys(req.query).length) {
+    Page.findByTag(req.query.tag)
+    .then(pages => {
+      res.render('index', {pages: pages})
+    })
+
+  } else {
+    Page.findAll({})
+    .then(arrPages => {
+      res.render('index', {pages: arrPages});
+    })
+  }
 });
 
 module.exports = router;
