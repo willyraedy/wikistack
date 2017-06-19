@@ -5,7 +5,7 @@ let userRouter = require('./user');
 let Page = require('../models/').Page;
 
 router.use('/wiki', wikiRouter);
-router.use('/user', userRouter);
+router.use('/users', userRouter);
 
 router.get('/', function (req, res, next) {
   Page.findAll({})
